@@ -5,6 +5,9 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\VotingController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\CandidateController;
+use App\Http\Controllers\VoteExportController;
+use App\Http\Controllers\StudentCardController;
+use App\Http\Controllers\StudentImportController;
 
 // Halaman utama untuk memasukkan NIS
 Route::get('/', [VotingController::class, 'index'])->name('voting.index');
@@ -19,6 +22,20 @@ Route::post('/vote', [VotingController::class, 'vote'])->name('voting.vote');
 Route::prefix('admin')->middleware('admin')->group(function () {
     Route::resource('students', StudentController::class)->except(['show']);
     Route::resource('candidates', CandidateController::class)->except(['show']);
+
+    Route::get('students/export-cards', [StudentCardController::class, 'exportCards'])
+        ->name('students.export-cards');
+
+    Route::get('/votes/export-result', [VoteExportController::class, 'exportVoteResult'])
+        ->name('votes.export-result');
+
+    Route::get('/students/import', [StudentImportController::class, 'showImportForm'])
+        ->name('students.import.form');
+    Route::post('/students/import', [StudentImportController::class, 'import'])
+        ->name('students.import');
+
+    Route::get('/students/export-excel', [StudentController::class, 'exportExcel'])
+        ->name('students.export-excel');
 });
 
 // Halaman admin untuk melihat hasil

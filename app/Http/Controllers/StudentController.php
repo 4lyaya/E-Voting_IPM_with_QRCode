@@ -5,11 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use App\Events\StudentCreated;
+use App\Exports\StudentsExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class StudentController extends Controller
 {
+    public function exportExcel()
+    {
+        return Excel::download(new StudentsExport, 'data-siswa.xlsx');
+    }
     public function index()
     {
         $students = Student::orderBy('name')->paginate(10);
@@ -25,17 +31,25 @@ class StudentController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'nis' => 'required|unique:students,nis|digits_between:4,20',
-            'name' => 'required|string|max:255',
-        ], [
-            'nis.required' => 'NIS wajib diisi.',
-            'nis.unique' => 'NIS sudah terdaftar.',
-            'nis.digits_between' => 'NIS harus berupa angka antara 4-20 digit.',
-            'name.required' => 'Nama siswa wajib diisi.',
-            'name.string' => 'Nama harus berupa teks.',
-            'name.max' => 'Nama maksimal 255 karakter.',
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'nis' => 'required|unique:students,nis|digits_between:4,20',
+                'name' => 'required|string|max:255',
+                'classroom' => 'required|string|max:255',
+            ],
+            [
+                'nis.required' => 'NIS wajib diisi.',
+                'nis.unique' => 'NIS sudah terdaftar.',
+                'nis.digits_between' => 'NIS harus berupa angka antara 4-20 digit.',
+                'name.required' => 'Nama siswa wajib diisi.',
+                'name.string' => 'Nama harus berupa teks.',
+                'name.max' => 'Nama maksimal 255 karakter.',
+                'classroom.required' => 'Nama kelas wajib diisi.',
+                'classroom.string' => 'Nama kelas harus berupa teks.',
+                'classroom.max' => 'Nama kelas maksimal 255 karakter.',
+            ]
+        );
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -48,10 +62,11 @@ class StudentController extends Controller
             $student = Student::create([
                 'nis' => $request->nis,
                 'name' => $request->name,
+                'classroom' => $request->classroom,
                 'has_voted' => false,
             ]);
 
-            // Fire event untuk generate QR Code
+            // Trigger event generate QR Code
             event(new StudentCreated($student));
 
             return redirect()->route('students.index')
@@ -70,17 +85,25 @@ class StudentController extends Controller
 
     public function update(Request $request, Student $student)
     {
-        $validator = Validator::make($request->all(), [
-            'nis' => 'required|digits_between:4,20|unique:students,nis,' . $student->id,
-            'name' => 'required|string|max:255',
-        ], [
-            'nis.required' => 'NIS wajib diisi.',
-            'nis.unique' => 'NIS sudah terdaftar.',
-            'nis.digits_between' => 'NIS harus berupa angka antara 4-20 digit.',
-            'name.required' => 'Nama siswa wajib diisi.',
-            'name.string' => 'Nama harus berupa teks.',
-            'name.max' => 'Nama maksimal 255 karakter.',
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'nis' => 'required|digits_between:4,20|unique:students,nis,' . $student->id,
+                'name' => 'required|string|max:255',
+                'classroom' => 'required|string|max:255',
+            ],
+            [
+                'nis.required' => 'NIS wajib diisi.',
+                'nis.unique' => 'NIS sudah terdaftar.',
+                'nis.digits_between' => 'NIS harus berupa angka antara 4-20 digit.',
+                'name.required' => 'Nama siswa wajib diisi.',
+                'name.string' => 'Nama harus berupa teks.',
+                'name.max' => 'Nama maksimal 255 karakter.',
+                'classroom.required' => 'Nama kelas wajib diisi.',
+                'classroom.string' => 'Nama kelas harus berupa teks.',
+                'classroom.max' => 'Nama kelas maksimal 255 karakter.',
+            ]
+        );
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -91,11 +114,14 @@ class StudentController extends Controller
 
         try {
             $oldNis = $student->nis;
+
             $student->update([
                 'nis' => $request->nis,
                 'name' => $request->name,
+                'classroom' => $request->classroom,
             ]);
 
+            // Jika NIS berubah, QR lama dihapus dan generate ulang
             if ($oldNis !== $request->nis) {
                 if ($student->qr_code_path && Storage::disk('public')->exists($student->qr_code_path)) {
                     Storage::disk('public')->delete($student->qr_code_path);

@@ -311,12 +311,18 @@
         </div>
         <!-- Detail Perolehan Suara -->
         <div class="stats-card p-6 mb-10">
-            <h2 class="text-xl font-semibold mb-5 text-gray-800 flex items-center">
-                <div class="bg-green-100 p-2 rounded-lg mr-3">
-                    <i class="fas fa-clipboard-list text-green-600"></i>
-                </div>
-                Detail Perolehan Suara
-            </h2>
+            <div class="flex justify-between items-center mb-5">
+                <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+                    <div class="bg-green-100 p-2 rounded-lg mr-3">
+                        <i class="fas fa-clipboard-list text-green-600"></i>
+                    </div>
+                    Detail Perolehan Suara
+                </h2>
+                <a href="{{ route('votes.export-result') }}"
+                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg inline-flex items-center text-sm font-medium">
+                    <i class="fas fa-file-pdf mr-2"></i> Export Hasil Vote
+                </a>
+            </div>
             <div class="overflow-x-auto rounded-xl shadow-inner">
                 <table class="w-full text-sm text-left text-gray-500">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-100">

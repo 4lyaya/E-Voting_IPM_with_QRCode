@@ -186,12 +186,26 @@
                     @enderror
                 </div>
                 <div class="mb-6">
+                    <label for="classroom" class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-door-open mr-2 text-blue-600"></i>Nama Kelas
+                    </label>
+                    <input type="text" id="classroom" name="classroom"
+                        value="{{ old('classroom', $student->classroom ?? '') }}"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none form-input transition"
+                        placeholder="Masukkan nama kelas" required>
+                    @error('classroom')
+                        <p class="text-red-500 text-xs mt-1">
+                            <i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}
+                        </p>
+                    @enderror
+                </div>
+                <div class="mb-6">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">
                         <i class="fas fa-vote-yea mr-2 text-blue-600"></i>Status Voting
                     </label>
                     <div class="flex items-center">
                         <span
-                            class="status-badge 
+                            class="status-badge
                             {{ $student->has_voted ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
                             <i class="fas {{ $student->has_voted ? 'fa-check-circle' : 'fa-clock' }} mr-2"></i>
                             {{ $student->has_voted ? 'Sudah Voting' : 'Belum Voting' }}

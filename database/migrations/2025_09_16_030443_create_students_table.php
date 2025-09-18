@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('nis')->unique();
             $table->string('name');
+            $table->string('classroom');
             $table->boolean('has_voted')->default(false);
             $table->timestamps();
         });

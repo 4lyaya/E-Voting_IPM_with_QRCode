@@ -231,10 +231,30 @@
         @endif
         <!-- Students Table -->
         <div class="stats-card p-0 overflow-hidden fade-in">
-            <div class="bg-blue-600 p-6 text-white">
+            <div class="bg-blue-600 p-6 text-white flex justify-between items-center">
                 <h2 class="text-xl font-semibold flex items-center">
                     <i class="fas fa-list-alt mr-3"></i> Daftar Siswa
                 </h2>
+
+                <div class="flex gap-3">
+                    <!-- Import -->
+                    <a href="{{ route('students.import.form') }}"
+                        class="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition inline-flex items-center text-sm font-medium">
+                        <i class="fas fa-upload mr-2"></i> Import Siswa
+                    </a>
+
+                    <!-- Export Excel -->
+                    <a href="{{ route('students.export-excel') }}"
+                        class="bg-emerald-500 text-white px-4 py-2 rounded-lg shadow hover:bg-emerald-600 transition inline-flex items-center text-sm font-medium">
+                        <i class="fas fa-file-excel mr-2"></i> Export Excel
+                    </a>
+
+                    <!-- Export PDF -->
+                    <a href="{{ route('students.export-cards') }}"
+                        class="bg-white text-blue-600 px-4 py-2 rounded-lg shadow hover:bg-gray-100 transition inline-flex items-center text-sm font-medium">
+                        <i class="fas fa-file-pdf mr-2"></i> Export Kartu QR
+                    </a>
+                </div>
             </div>
             <div class="p-6">
                 <div class="overflow-x-auto rounded-xl">
@@ -244,6 +264,7 @@
                                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">QR Code</th>
                                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">NIS</th>
                                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Nama Siswa</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Nama kelas</th>
                                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status Voting</th>
                                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Aksi</th>
                             </tr>
@@ -265,6 +286,9 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         {{ $student->name }}
                                     </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {{ $student->classroom }}
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span
                                             class="px-3 py-1 text-xs font-semibold rounded-full
@@ -280,8 +304,8 @@
                                                 class="text-blue-600 hover:text-blue-800 transition flex items-center">
                                                 <i class="fas fa-edit mr-1"></i> Edit
                                             </a>
-                                            <form action="{{ route('students.destroy', $student->id) }}" method="POST"
-                                                class="inline delete-form">
+                                            <form action="{{ route('students.destroy', $student->id) }}"
+                                                method="POST" class="inline delete-form">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button"

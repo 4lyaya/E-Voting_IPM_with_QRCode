@@ -9,7 +9,7 @@ class Student extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nis', 'name', 'has_voted', 'qr_code_path'];
+    protected $fillable = ['nis', 'name', 'classroom', 'has_voted', 'qr_code_path'];
 
     protected $casts = [
         'has_voted' => 'boolean',

@@ -11,7 +11,7 @@ class VotingController extends Controller
 {
     public function index()
     {
-        return view('voting.index');
+        return view('voting.index1');
     }
 
     public function verifyNis(Request $request)
